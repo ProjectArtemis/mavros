@@ -116,6 +116,7 @@ private:
 	const double min_freq_;
 	const double max_freq_;
 	const double tolerance_;
+	const float times
 	int64_t last_dt;
 	int64_t dt_sum;
 	uint64_t last_ts;
@@ -133,7 +134,7 @@ public:
 		uas(nullptr),
 		dt_diag("Time Sync", 10),
 		time_offset_ns(0),
-		offset_avg_alpha(0)
+		timesync_lpf_beta(0)
 	{ };
 
 	void initialize(UAS &uas_)
@@ -167,11 +168,9 @@ public:
 		}
 
 		nh.param<std::string>("time/time_ref_source", time_ref_source, "fcu");
-		nh.param("time/timesync_avg_alpha", offset_avg_alpha, 0.6);
+		nh.param("time/timesync_lpf_beta", timesync_lpf_beta, 1.0);
 		/*
-		 * alpha for exponential moving average. The closer alpha is to 1.0,
-		 * the faster the moving average updates in response to new offset samples (more jitter)
-		 * We need a significant amount of smoothing , more so for lower message rates like 1Hz
+		 * 'beta' term for timeysnc offset low-pass filter
 		 */
 
 		time_ref_pub = nh.advertise<sensor_msgs::TimeReference>("time_reference", 10);
@@ -213,7 +212,7 @@ private:
 
 	std::string time_ref_source;
 	int64_t time_offset_ns;
-	double offset_avg_alpha;
+	static const float timesync_lpf_beta;
 
 	void handle_system_time(const mavlink_message_t *msg, uint8_t sysid, uint8_t compid) {
 		mavlink_system_time_t mtime;
@@ -301,7 +300,7 @@ private:
 	}
 
 	inline void average_offset(int64_t offset_ns) {
-		time_offset_ns = (offset_avg_alpha * offset_ns) + (1.0 - offset_avg_alpha) * time_offset_ns;
+		time_offset_ns = time_offset_ns - (timesync_lpf_beta *(time_offset_ns - offset_ns));
 	}
 };
 };	// namespace mavplugin
