@@ -22,20 +22,11 @@ namespace mavros {
 namespace ftf {
 namespace detail {
 
-// Static quaternion needed for rotating between ENU and NED frames
-// +PI rotation around X (North) axis follwed by +PI/2 rotation about Z (Down)
-// gives the ENU frame.  Similarly, a +PI rotation about X (East) followed by
-// a +PI/2 roation about Z (Up) gives the NED frame.
-static const Eigen::Quaterniond NED_ENU_Q = quaternion_from_rpy(M_PI, 0.0, M_PI_2);
-
 // Static quaternion needed for rotating between aircraft and base_link frames
 // +PI rotation around X (Forward) axis transforms from Forward, Right, Down (aircraft)
 // Fto Forward, Left, Up (base_link) frames.
 static const Eigen::Quaterniond AIRCRAFT_BASELINK_Q = quaternion_from_rpy(M_PI, 0.0, 0.0);
-
-static const Eigen::Affine3d NED_ENU_AFFINE(NED_ENU_Q);
-static const Eigen::Affine3d AIRCRAFT_BASELINK_AFFINE(AIRCRAFT_BASELINK_Q);
-
+static const Eigen::Transform<double, 3, Eigen::Affine> AIRCRAFT_BASELINK_AFFINE(AIRCRAFT_BASELINK_Q);
 
 Eigen::Quaterniond transform_orientation(const Eigen::Quaterniond &q, const StaticTF transform)
 {
@@ -45,11 +36,10 @@ Eigen::Quaterniond transform_orientation(const Eigen::Quaterniond &q, const Stat
 	switch (transform) {
 	case StaticTF::NED_TO_ENU:
 	case StaticTF::ENU_TO_NED:
-		return NED_ENU_Q * q;
-
+		
 	case StaticTF::AIRCRAFT_TO_BASELINK:
 	case StaticTF::BASELINK_TO_AIRCRAFT:
-		return q * AIRCRAFT_BASELINK_Q;
+		return AIRCRAFT_BASELINK_Q * q * AIRCRAFT_BASELINK_Q.inverse();
 	}
 }
 
@@ -58,14 +48,14 @@ Eigen::Vector3d transform_static_frame(const Eigen::Vector3d &vec, const StaticT
 	switch (transform) {
 	case StaticTF::NED_TO_ENU:
 	case StaticTF::ENU_TO_NED:
-		return NED_ENU_AFFINE * vec;
-
+		
 	case StaticTF::AIRCRAFT_TO_BASELINK:
 	case StaticTF::BASELINK_TO_AIRCRAFT:
 		return AIRCRAFT_BASELINK_AFFINE * vec;
 	}
 }
 
+#if 0
 Covariance3d transform_static_frame(const Covariance3d &cov, const StaticTF transform)
 {
 	Covariance3d cov_out_;
@@ -85,7 +75,6 @@ Covariance3d transform_static_frame(const Covariance3d &cov, const StaticTF tran
 	}
 }
 
-#if 0
 Covariance6d transform_static_frame(const Covariance6d &cov, const StaticTF transform)
 {
 	//! @todo implement me!!!
@@ -99,7 +88,6 @@ Covariance6d transform_static_frame(const Covariance6d &cov, const StaticTF tran
 	}
 	}
 }
-#endif
 
 Eigen::Vector3d transform_frame(const Eigen::Vector3d &vec, const Eigen::Quaterniond &q)
 {
@@ -117,7 +105,6 @@ Covariance3d transform_frame(const Covariance3d &cov, const Eigen::Quaterniond &
 	return cov_out_;
 }
 
-#if 0
 Covariance6d transform_frame(const Covariance6d &cov, const Eigen::Quaterniond &q)
 {
 	Covariance6d cov_out_;

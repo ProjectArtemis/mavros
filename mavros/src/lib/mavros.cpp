@@ -136,8 +136,9 @@ MavRos::MavRos() :
 		mavlink_pub_cb(msg, framing);
 		plugin_route_cb(msg, framing);
 
-		if (gcs_link)
+		if (gcs_link) {
 			gcs_link->send_message_ignore_drop(msg);
+		}
 	};
 
 	fcu_link->port_closed_cb = []() {

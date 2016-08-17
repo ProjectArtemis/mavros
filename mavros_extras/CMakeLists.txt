@@ -10,10 +10,13 @@ find_package(catkin REQUIRED COMPONENTS
   mavros_msgs
   sensor_msgs
   geometry_msgs
+  nav_msgs
   std_msgs
   visualization_msgs
   urdf
   tf
+  tf_conversions
+  eigen_conversions
 )
 
 ## System dependencies are found with CMake's conventions
@@ -50,9 +53,11 @@ include(MavrosMavlink)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES
-  CATKIN_DEPENDS mavros mavros_msgs roscpp sensor_msgs geometry_msgs
+  CATKIN_DEPENDS mavros mavros_msgs roscpp sensor_msgs geometry_msgs nav_msgs tf eigen_conversions tf_conversions
   DEPENDS Boost
 )
+
+find_library(SWIFTNAV swiftnav)
 
 ###########
 ## Build ##
@@ -71,8 +76,10 @@ add_library(mavros_extras
   src/plugins/vision_speed_estimate.cpp
   src/plugins/vibration.cpp
   src/plugins/cam_imu_sync.cpp
+  src/plugins/estimator_bridge.cpp
 )
 target_link_libraries(mavros_extras
+  ${SWIFTNAV}
   ${mavros_LIBRARIES}
   ${catkin_LIBRARIES}
 )

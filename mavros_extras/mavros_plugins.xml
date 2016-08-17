@@ -16,8 +16,11 @@
 	</class>
 	<class name="vibration" type="mavros::extra_plugins::VibrationPlugin" base_class_type="mavros::plugin::PluginBase">
 		<description>Publish VIBRATION message data from FCU.</description>
-	</class>
+	</class>s
         <class name="cam_imu_sync" type="mavros::extra_plugins::CamIMUSyncPlugin" base_class_type="mavros::plugin::PluginBase">
 		<description>Publish camera trigger data for synchronisation of IMU and camera frames</description>
+	</class>
+	<class name="estimator_bridge" type="mavros::extra_plugins::EstimatorBridgePlugin" base_class_type="mavros::plugin::PluginBase">
+		<description>Bidirectional estimator interface</description>
 	</class>
 </library>
