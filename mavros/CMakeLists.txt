@@ -100,7 +100,7 @@ target_link_libraries(mavros
 add_dependencies(mavros mavros_msgs_generate_messages_cpp)
 
 add_library(mavros_plugins
-  src/plugins/dummy.cpp
+  #src/plugins/dummy.cpp
   src/plugins/sys_status.cpp
   src/plugins/sys_time.cpp
   src/plugins/imu_pub.cpp
@@ -108,21 +108,21 @@ add_library(mavros_plugins
   src/plugins/waypoint.cpp
   src/plugins/rc_io.cpp
   src/plugins/command.cpp
-  src/plugins/local_position.cpp
-  src/plugins/global_position.cpp
+  #src/plugins/local_position.cpp
+  #src/plugins/global_position.cpp
   src/plugins/setpoint_position.cpp
-  src/plugins/safety_area.cpp
-  src/plugins/3dr_radio.cpp
+  #src/plugins/safety_area.cpp
+  #src/plugins/3dr_radio.cpp
   src/plugins/setpoint_velocity.cpp
   src/plugins/setpoint_accel.cpp
   src/plugins/setpoint_attitude.cpp
   src/plugins/setpoint_raw.cpp
-  src/plugins/vfr_hud.cpp
-  src/plugins/ftp.cpp
-  src/plugins/actuator_control.cpp
+  #src/plugins/vfr_hud.cpp
+  #src/plugins/ftp.cpp
+  #src/plugins/actuator_control.cpp
   src/plugins/manual_control.cpp
   src/plugins/altitude.cpp
-  src/plugins/hil_controls.cpp
+  #src/plugins/hil_controls.cpp
 )
 add_dependencies(mavros_plugins
   mavros
