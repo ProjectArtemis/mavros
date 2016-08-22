@@ -278,14 +278,14 @@ inline bool is_mavlink_message_t(const size_t rt)
 void MavRos::add_plugin(std::string &pl_name, ros::V_string &blacklist, ros::V_string &whitelist)
 {
 	if (is_blacklisted(pl_name, blacklist, whitelist)) {
-		ROS_INFO_STREAM("Plugin " << pl_name << " blacklisted");
+		//ROS_INFO_STREAM("Plugin " << pl_name << " blacklisted");
 		return;
 	}
 
 	try {
 		auto plugin = plugin_loader.createInstance(pl_name);
 
-		ROS_INFO_STREAM("Plugin " << pl_name << " loaded");
+		//ROS_INFO_STREAM("Plugin " << pl_name << " loaded");
 
 		for (auto &info : plugin->get_subscriptions()) {
 			auto msgid = std::get<0>(info);
