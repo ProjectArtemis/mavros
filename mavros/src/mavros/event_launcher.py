@@ -22,6 +22,7 @@ import subprocess
 
 from std_srvs.srv import Trigger, TriggerRequest, TriggerResponse
 from mavros_msgs.msg import State
+from mavros_msgs.msg import ExtendedState
 
 
 class EventHandler(object):
@@ -171,14 +172,17 @@ class Launcher(object):
         'known_events',
         'triggers',
         'prev_armed',
+        'prev_safety_state',
         'state_sub',
+        'ext_state_sub',
     ]
 
     def __init__(self):
         self.handlers = []
-        self.known_events = ['armed', 'disarmed']
+        self.known_events = ['armed', 'disarmed', 'safety_off', 'safety_on']
         self.triggers = {}
         self.prev_armed = False
+        self.prev_safety_state = 0
 
         try:
             params = rospy.get_param('~')
@@ -211,6 +215,11 @@ class Launcher(object):
             mavros.get_topic('state'),
             State,
             self.mavros_state_cb)
+        
+        self.ext_state_sub = rospy.Subscriber(
+            mavros.get_topic('extended_state'),
+            ExtendedState,
+            self.mavros_ext_state_cb)
 
     def _load_trigger(self, name, params):
         rospy.logdebug("Loading trigger: %s", name)
@@ -293,6 +302,11 @@ class Launcher(object):
         if msg.armed != self.prev_armed:
             self.prev_armed = msg.armed
             self('armed' if msg.armed else 'disarmed')
+            
+    def mavros_ext_state_cb(self, msg):
+        if msg.safety_state != self.prev_safety_state:
+            self.prev_safety_state = msg.safety_state
+            self('safety_off' if msg.safety_state == 2 else 'safety_on')
 
 
 def main():

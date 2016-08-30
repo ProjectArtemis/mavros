@@ -661,6 +661,7 @@ private:
 		state_msg->header.stamp = ros::Time::now();
 		state_msg->vtol_state = state.vtol_state;
 		state_msg->landed_state = state.landed_state;
+		state_msg->safety_state = state.safety_state;
 
 		extended_state_pub.publish(state_msg);
 	}
