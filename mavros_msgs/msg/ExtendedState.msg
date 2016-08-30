@@ -12,6 +12,11 @@ uint8 LANDED_STATE_UNDEFINED = 0
 uint8 LANDED_STATE_ON_GROUND = 1
 uint8 LANDED_STATE_IN_AIR = 2
 
+uint8 SAFETY_STATE_UNDEFINED = 0
+uint8 SAFETY_STATE_ON = 1
+uint8 SAFETY_STATE_OFF = 2
+
 std_msgs/Header header
 uint8 vtol_state
 uint8 landed_state
+uint8 safety_state
